@@ -1,24 +1,29 @@
-struct BattleCfg
-{
-    public int id;
+public struct BattleCfg {
     public int mapWidth;
     public int mapHeight;
 }
 
-class BattleMgr
-{
-    private BattleMap battleMap;
-    private BattleUnit[] battleUnits;
+public class BattleMgr : Singleton<BattleMgr> {
+    private BattleMap m_battleMap;
+    private BattleUnit[] m_battleUnits;
 
-    public void InitBattle(BattleCfg battleCfg) {
-        
+    public void CreatBattle(BattleCfg battleCfg) {
+        InitBattle(battleCfg);
     }
 
-    private void InitBattleMap() {
+    private void InitBattle(BattleCfg battleCfg) {
+        int mapWidth = battleCfg.mapWidth;
+        int mapHeight = battleCfg.mapHeight;
 
+        InitBattleMap(mapWidth, mapHeight);
+        InitBattleUnits();
     }
 
-    private void InitBattleUnit() {
+    private void InitBattleMap(int width, int height) {
+        m_battleMap = new BattleMap(width, height);
+    }
+
+    private void InitBattleUnits() {
         
     }
 }

@@ -1,10 +1,10 @@
-struct GridPos
+public struct GridPos
 {
     public int row;
     public int col;
 }
 
-enum GridType
+public enum GridType
 {
     Normal,     //平地
     Obstacle    //障碍
@@ -12,6 +12,12 @@ enum GridType
 
 public class MapGrid : EntityBase
 {
-    private GridPos gridPos;
-    private GridType gridType;
+    private GridPos m_gridPos;
+    private GridType m_gridType;
+
+    private MapGrid() { }
+    public MapGrid(GridPos gridPos)
+    {
+        m_gridPos = gridPos;
+    }
 }
