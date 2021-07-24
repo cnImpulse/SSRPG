@@ -43,11 +43,11 @@ public class BattleMap : EntityBase
         RandomGenerateMap();
     }
 
-    public List<MapGrid> GetNeighbors(Vector2Int position)
+    public List<MapGrid> GetNeighbors(Vector2Int position, Vector2Int[] dirArray)
     {
         if (!IsInMap(position)) return null;
         List<MapGrid> neighbors = new List<MapGrid>();
-        for(int i=0; i<4; ++i)
+        for (int i = 0; i < dirArray.Length; ++i)
         {
             MapGrid grid = GetMapGrid(position + dirArray[i]);
             if (grid != null) neighbors.Add(grid);
@@ -68,7 +68,9 @@ public class BattleMap : EntityBase
         return true;
     }
 
-    Vector2Int[] dirArray = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
+    Vector2Int[] dirArray4 = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
+    Vector2Int[] dirArray8 = { Vector2Int.up, Vector2Int.one, Vector2Int.right, new Vector2Int(1, -1),
+                               Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.right, new Vector2Int(-1, 1)};
     // 随机游走算法-效率低下版
     public void RandomGenerateMap()
     {
@@ -82,7 +84,7 @@ public class BattleMap : EntityBase
 
         // 随机乱走
         int roadNum = 0;
-        while (roadNum < 3000)
+        while (roadNum < Width * Height / 2)
         {
             MapGrid grid = GetMapGrid(position);
             if (grid != null && grid.GridType != GridType.Normal)
@@ -91,14 +93,14 @@ public class BattleMap : EntityBase
                 normalGrids.Add(grid);
                 ++roadNum;
             }
-            List<MapGrid> neighbors = GetNeighbors(position);
+            List<MapGrid> neighbors = GetNeighbors(position, dirArray4);
             position = neighbors[Random.Range(0, neighbors.Count)].GridPosVec2Int;
         }
 
         // 画墙壁
         foreach(var grid in normalGrids)
         {
-            List<MapGrid> neighbors = GetNeighbors(grid.GridPosVec2Int);
+            List<MapGrid> neighbors = GetNeighbors(grid.GridPosVec2Int, dirArray4);
             foreach(var neighbor in neighbors)
             {
                 if (neighbor.GridType == GridType.None)
@@ -107,6 +109,29 @@ public class BattleMap : EntityBase
                     obstacleGrids.Add(neighbor);
                 }
             }
+        }
+
+        // 清除孤立的墙壁
+        List<MapGrid> needRemove = new List<MapGrid>();
+        for (int i = 0; i < 4; ++i)
+        {
+            foreach (var grid in obstacleGrids)
+            {
+                List<MapGrid> neighbors = GetNeighbors(grid.GridPosVec2Int, dirArray8);
+                int normalCount = 0;
+                foreach (var neighbor in neighbors)
+                {
+                    if (neighbor.GridType == GridType.Normal) ++normalCount;
+                }
+                if (normalCount >= 7) needRemove.Add(grid);
+            }
+            foreach (var grid in needRemove)
+            {
+                grid.GridType = GridType.Normal;
+                obstacleGrids.Remove(grid);
+                normalGrids.Add(grid);
+            }
+            needRemove.Clear();
         }
     }
 }

@@ -13,8 +13,8 @@ public class BattleMapRenderer : MonoBehaviour
         tilemap = GetComponent<Tilemap>();
 
         BattleCfg battleCfg;
-        battleCfg.mapWidth = 100;
-        battleCfg.mapHeight = 100;
+        battleCfg.mapWidth = 30;
+        battleCfg.mapHeight = 30;
         BattleMgr.Instance.CreatBattle(battleCfg);
         battleMap = BattleMgr.Instance.battleMap;
 
