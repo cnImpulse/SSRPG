@@ -33,14 +33,18 @@ public class BattleMap : EntityBase
         Width  = width; 
         Height = height;
         mapGrids = new MapGrid[Height, Width];
-        for(int row = 0; row < Height; ++row) 
+        normalGrids = new List<MapGrid>();
+        obstacleGrids = new List<MapGrid>();
+
+        for (int row = 0; row < Height; ++row) 
         {
             for(int col = 0; col < Width; ++col) 
             {
                 mapGrids[row, col] = new MapGrid(row, col);
             }
         }
-        RandomGenerateMap();
+        //RandomGenerateMap();
+        RandomGenerateMapCell();
     }
 
     public List<MapGrid> GetNeighbors(Vector2Int position, Vector2Int[] dirArray)
@@ -53,6 +57,17 @@ public class BattleMap : EntityBase
             if (grid != null) neighbors.Add(grid);
         }
         return neighbors;
+    }
+
+    public int GetNeighborsTypeCount(Vector2Int position, Vector2Int[] dirArray, GridType gridType)
+    {
+        int count = 0;
+        List<MapGrid> neighbors = GetNeighbors(position, dirArray);
+        foreach (var neighbor in neighbors)
+        {
+            if (neighbor.GridType == gridType) ++count;
+        }
+        return count;
     }
 
     public MapGrid GetMapGrid(Vector2Int gridPos)
@@ -68,15 +83,19 @@ public class BattleMap : EntityBase
         return true;
     }
 
-    Vector2Int[] dirArray4 = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
-    Vector2Int[] dirArray8 = { Vector2Int.up, Vector2Int.one, Vector2Int.right, new Vector2Int(1, -1),
+    public bool IsBoundary(Vector2Int gridPos)
+    {
+        if (gridPos.x == 0 || gridPos.x == Height-1 || gridPos.y ==0 || gridPos.y == Width-1)
+            return true;
+        return false;
+    }
+
+    public static Vector2Int[] dirArray4 = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
+    public static Vector2Int[] dirArray8 = { Vector2Int.up, Vector2Int.one, Vector2Int.right, new Vector2Int(1, -1),
                                Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.right, new Vector2Int(-1, 1)};
     // 随机游走算法-效率低下版
     public void RandomGenerateMap()
     {
-        normalGrids = new List<MapGrid>();
-        obstacleGrids = new List<MapGrid>();
-
         // 随机起点
         int row = Random.Range(0, Height);
         int col = Random.Range(0, Width);
@@ -117,12 +136,7 @@ public class BattleMap : EntityBase
         {
             foreach (var grid in obstacleGrids)
             {
-                List<MapGrid> neighbors = GetNeighbors(grid.GridPosVec2Int, dirArray8);
-                int normalCount = 0;
-                foreach (var neighbor in neighbors)
-                {
-                    if (neighbor.GridType == GridType.Normal) ++normalCount;
-                }
+                int normalCount = GetNeighborsTypeCount(grid.GridPosVec2Int, dirArray8, GridType.Normal);
                 if (normalCount >= 7) needRemove.Add(grid);
             }
             foreach (var grid in needRemove)
@@ -132,6 +146,48 @@ public class BattleMap : EntityBase
                 normalGrids.Add(grid);
             }
             needRemove.Clear();
+        }
+    }
+
+    // 思路参考细胞自动机
+    public void RandomGenerateMapCell()
+    {
+        // 随机生成地面和墙壁
+        for (int row = 0; row < Height; ++row)
+        {
+            for (int col = 0; col < Width; ++col)
+            {
+                MapGrid grid = mapGrids[row, col];
+                if (IsBoundary(new Vector2Int(col, row))) grid.GridType = GridType.Obstacle;
+                else grid.GridType = (GridType)Random.Range(1, 3);
+
+                if (grid.GridType == GridType.Normal) normalGrids.Add(grid);
+                else if (grid.GridType == GridType.Obstacle) obstacleGrids.Add(grid);
+            }
+        }
+
+
+        List<MapGrid> needSetObstacle = new List<MapGrid>();
+        List<MapGrid> needSetNormal = new List<MapGrid>();
+        for (int i = 0; i < 5; ++i)
+        {
+            for (int row = 0; row < Height; ++row)
+            {
+                for (int col = 0; col < Width; ++col)
+                {
+                    MapGrid grid = mapGrids[row, col];
+                    int count = 8 - GetNeighbors(grid.GridPosVec2Int, dirArray8).Count +
+                        GetNeighborsTypeCount(grid.GridPosVec2Int, dirArray8, GridType.Obstacle);
+                    if (count > 4 && grid.GridType == GridType.Normal)
+                        needSetObstacle.Add(grid);
+                    else if (count < 4 && grid.GridType == GridType.Obstacle)
+                        needSetNormal.Add(grid);
+                }
+            }
+            foreach (var grid in needSetNormal) grid.GridType = GridType.Normal;
+            foreach (var grid in needSetObstacle) grid.GridType = GridType.Obstacle;
+            needSetNormal.Clear();
+            needSetObstacle.Clear();
         }
     }
 }

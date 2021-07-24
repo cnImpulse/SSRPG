@@ -12,12 +12,25 @@ public class BattleMapRenderer : MonoBehaviour
     {
         tilemap = GetComponent<Tilemap>();
 
+        GetBattleMapData();
+    }
+
+    private void OnGUI()
+    {
+        if (GUI.Button(new Rect(0, 0, 180, 100), "Next"))
+        {
+            GetBattleMapData();
+        }
+    }
+
+    private void GetBattleMapData()
+    {
+        tilemap.ClearAllTiles();
         BattleCfg battleCfg;
-        battleCfg.mapWidth = 30;
-        battleCfg.mapHeight = 30;
+        battleCfg.mapWidth = 100;
+        battleCfg.mapHeight = 100;
         BattleMgr.Instance.CreatBattle(battleCfg);
         battleMap = BattleMgr.Instance.battleMap;
-
         RefreshBattleMap();
     }
 
