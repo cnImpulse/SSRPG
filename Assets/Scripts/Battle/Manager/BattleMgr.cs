@@ -1,17 +1,23 @@
+using UnityEngine;
+
 public struct BattleCfg {
     public int mapWidth;
     public int mapHeight;
 }
 
-public class BattleMgr : Singleton<BattleMgr> {
-    private BattleMap m_battleMap;
-    private BattleUnit[] m_battleUnits;
+public class BattleMgr : Singleton<BattleMgr> 
+{
+    public BattleMap battleMap;
+    public BattleUnit[] battleUnits;
 
-    public void CreatBattle(BattleCfg battleCfg) {
-        InitBattle(battleCfg);
+    public void CreatBattle(BattleCfg battleCfg) 
+    {
+        InitBattleData(battleCfg);
     }
 
-    private void InitBattle(BattleCfg battleCfg) {
+    #region InitData
+    private void InitBattleData(BattleCfg battleCfg) 
+    {
         int mapWidth = battleCfg.mapWidth;
         int mapHeight = battleCfg.mapHeight;
 
@@ -19,11 +25,14 @@ public class BattleMgr : Singleton<BattleMgr> {
         InitBattleUnits();
     }
 
-    private void InitBattleMap(int width, int height) {
-        m_battleMap = new BattleMap(width, height);
+    private void InitBattleMap(int width, int height) 
+    {
+        battleMap = new BattleMap(width, height);
     }
 
-    private void InitBattleUnits() {
+    private void InitBattleUnits() 
+    {
         
     }
+    #endregion
 }
