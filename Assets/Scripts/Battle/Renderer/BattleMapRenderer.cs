@@ -13,8 +13,8 @@ public class BattleMapRenderer : MonoBehaviour
         tilemap = GetComponent<Tilemap>();
 
         BattleCfg battleCfg;
-        battleCfg.mapWidth = 18;
-        battleCfg.mapHeight = 10;
+        battleCfg.mapWidth = 100;
+        battleCfg.mapHeight = 100;
         BattleMgr.Instance.CreatBattle(battleCfg);
         battleMap = BattleMgr.Instance.battleMap;
 
@@ -30,8 +30,17 @@ public class BattleMapRenderer : MonoBehaviour
             for (int col = 0; col < battleMap.Width; ++col)
             {
                 MapGrid mapGrid = battleMap.mapGrids[row, col];
-                tilemap.SetTile(mapGrid.GridPosVec3Int, Resources.Load("grid") as Tile);
+                if (mapGrid.GridType == GridType.None) continue;
+
+                Tile tile = default;
+                switch (mapGrid.GridType)
+                {
+                    case GridType.Normal: tile = Resources.Load("white") as Tile; ; break;
+                    case GridType.Obstacle: tile = Resources.Load("black") as Tile; break;
+                }
+                tilemap.SetTile(mapGrid.GridPosVec3Int, tile);
             }
         }
+        tilemap.transform.position = new Vector3(-battleMap.Width / 2, -battleMap.Height / 2, 0);
     }
 }

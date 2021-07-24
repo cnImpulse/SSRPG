@@ -3,18 +3,31 @@ using UnityEngine;
 public struct GridPos {
     public int row;
     public int col;
+
+    public GridPos(int row, int col)
+    {
+        this.row = row;
+        this.col = col;
+    }
 }
 
 public enum GridType {
+    None,
     Normal,     //平地
     Obstacle    //障碍
 }
 
 public class MapGrid : EntityBase {
     private GridPos m_gridPos;
-    private GridType m_gridType = GridType.Normal;
 
     public GridPos GridPos => m_gridPos;
+    public Vector2Int GridPosVec2Int
+    {
+        get
+        {
+            return new Vector2Int(GridPos.col, GridPos.row);
+        }
+    }
     public Vector3Int GridPosVec3Int
     {
         get
@@ -22,7 +35,7 @@ public class MapGrid : EntityBase {
             return new Vector3Int(GridPos.col, GridPos.row, 0);
         }
     }
-    public GridType GridType => m_gridType;
+    public GridType GridType { get; set; }
 
     private MapGrid() { }
 
