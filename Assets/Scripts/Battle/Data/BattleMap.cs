@@ -43,8 +43,6 @@ public class BattleMap : EntityBase
                 mapGrids[row, col] = new MapGrid(row, col);
             }
         }
-        //RandomGenerateMap();
-        RandomGenerateMapCell();
     }
 
     public List<MapGrid> GetNeighbors(Vector2Int position, Vector2Int[] dirArray)
@@ -60,7 +58,7 @@ public class BattleMap : EntityBase
     }
 
     public int GetNeighborsTypeCount(Vector2Int position, Vector2Int[] dirArray, GridType gridType)
-    {
+        {
         int count = 0;
         List<MapGrid> neighbors = GetNeighbors(position, dirArray);
         foreach (var neighbor in neighbors)
@@ -78,7 +76,7 @@ public class BattleMap : EntityBase
 
     public bool IsInMap(Vector2Int gridPos)
     {
-        if (gridPos.x < 0 || gridPos.x >= Height || gridPos.y < 0 || gridPos.y >= Width)
+        if (gridPos.x < 0 || gridPos.x >= Width || gridPos.y < 0 || gridPos.y >= Height)
             return false;
         return true;
     }
@@ -92,7 +90,7 @@ public class BattleMap : EntityBase
 
     public static Vector2Int[] dirArray4 = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
     public static Vector2Int[] dirArray8 = { Vector2Int.up, Vector2Int.one, Vector2Int.right, new Vector2Int(1, -1),
-                               Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.right, new Vector2Int(-1, 1)};
+                               Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.left, new Vector2Int(-1, 1)};
     // 随机游走算法-效率低下版
     public void RandomGenerateMap()
     {
