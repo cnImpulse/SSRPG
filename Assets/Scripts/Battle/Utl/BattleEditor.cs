@@ -17,9 +17,8 @@ public class BattleEditor : MonoBehaviour
     private Tile amity;
     private Tile enemy;
 
-    private BattleMap battleMap;
-    private List<Vector2Int> amitys;
-    private List<Vector2Int> enemys;
+    private BattleMap mapData;
+    private List<BattleUnit> unitsData;
 
     private void Awake()
     {
@@ -30,9 +29,8 @@ public class BattleEditor : MonoBehaviour
         amity = Resources.Load("amity") as Tile;
         enemy = Resources.Load("enemy") as Tile;
 
-        battleMap = new BattleMap(width, height);
-        amitys = new List<Vector2Int>();
-        enemys = new List<Vector2Int>();
+        mapData = new BattleMap(width, height);
+        unitsData = new List<BattleUnit>();
     }
 
     private void Start()
@@ -44,13 +42,19 @@ public class BattleEditor : MonoBehaviour
                 Vector2Int position2 = new Vector2Int(j, i);
                 Vector3Int position3 = new Vector3Int(j, i, 0);
                 Tile mapTile = map.GetTile<Tile>(position3);
-                if (mapTile == normal) battleMap.SetMapGrid(position2, GridType.Normal);
-                else if (mapTile == obstacle) battleMap.SetMapGrid(position2, GridType.Obstacle);
+                if (mapTile == normal) mapData.SetMapGrid(position2, GridType.Normal);
+                else if (mapTile == obstacle) mapData.SetMapGrid(position2, GridType.Obstacle);
                 else Debug.LogError("错误");
 
                 Tile bornsTile = borns.GetTile<Tile>(position3);
-                if (bornsTile == amity) amitys.Add(position2);
-                else if (bornsTile == enemy) enemys.Add(position2);
+                if (bornsTile == amity)
+                {
+                    unitsData.Add(new BattleUnit(position2, BattleCamp.Amity));
+                }
+                else if (bornsTile == enemy)
+                {
+                    unitsData.Add(new BattleUnit(position2, BattleCamp.Enemy));
+                }
             }
         }
 
@@ -61,9 +65,8 @@ public class BattleEditor : MonoBehaviour
     {
         Debug.Log("SaveStart!");
         BattleData battleData = new BattleData();
-        battleData.mapData = battleMap;
-        battleData.amitys = amitys;
-        battleData.enemys = enemys;
+        battleData.mapData = mapData;
+        battleData.unitsData = unitsData;
 
         string json = JsonConvert.SerializeObject(battleData);
         string path = Application.dataPath + "/BattleData/default.json";

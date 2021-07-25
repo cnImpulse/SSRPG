@@ -9,9 +9,9 @@ public enum BattleCamp
 
 public class BattleUnit : EntityBase
 {
-    private Vector2Int position;
-    private BattleCamp battleCamp;
-    private BattleAttr battleAttr;
+    public Vector2Int position;
+    public BattleCamp battleCamp;
+    public BattleAttr battleAttr;
 
     public BattleUnit(Vector2Int pos, BattleCamp camp)
     {

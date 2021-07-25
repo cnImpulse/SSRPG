@@ -24,14 +24,6 @@ public class BattleMgr : Singleton<BattleMgr>
         battleMap = data.mapData;
         amityUnits = new List<BattleUnit>();
         enemyUnits = new List<BattleUnit>();
-        foreach(var pos in data.amitys)
-        {
-            amityUnits.Add(new BattleUnit(pos, BattleCamp.Amity));
-        }
-        foreach (var pos in data.amitys)
-        {
-            enemyUnits.Add(new BattleUnit(pos, BattleCamp.Enemy));
-        }
 
         CreatRenderer(data);
     }

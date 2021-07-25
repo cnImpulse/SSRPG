@@ -54,7 +54,7 @@ public class BattleMapRenderer : MonoBehaviour
                 Tile tile = default;
                 switch (grid.GridType)
                 {
-                    case GridType.Normal: tile = normal; ; break;
+                    case GridType.Normal: tile = normal; break;
                     case GridType.Obstacle: tile = obstacle; break;
                 }
                 tilemap.SetTile(grid.GridPosVec3Int, tile);
