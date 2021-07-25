@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.IO;
 
 public class Test : MonoBehaviour
 {
-    void Start()
+    private void Start()
     {
-
-    }
-
-    void Update()
-    {
-        
+        string path = Application.dataPath + "/BattleData/default.json";
+        StreamReader sr = new StreamReader(path);
+        string json = sr.ReadLine();
+        BattleData battleData = JsonConvert.DeserializeObject<BattleData>(json);
+        if (battleData.mapData == null) Debug.LogError("gan");
+        BattleMgr.Instance.CreatBattle(battleData);
     }
 }

@@ -61,7 +61,7 @@ public class BattleEditor : MonoBehaviour
     {
         Debug.Log("SaveStart!");
         BattleData battleData = new BattleData();
-        battleData.battleMap = battleMap;
+        battleData.mapData = battleMap;
         battleData.amitys = amitys;
         battleData.enemys = enemys;
 

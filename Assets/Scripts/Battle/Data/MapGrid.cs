@@ -18,9 +18,7 @@ public enum GridType {
 }
 
 public class MapGrid : EntityBase {
-    private GridPos m_gridPos;
-
-    public GridPos GridPos => m_gridPos;
+    public GridPos GridPos { get; set; }
     public Vector2Int GridPosVec2Int
     {
         get
@@ -40,11 +38,15 @@ public class MapGrid : EntityBase {
     private MapGrid() { }
 
     public MapGrid(GridPos gridPos) {
-        m_gridPos = gridPos;
+        GridPos = gridPos;
     }
 
     public MapGrid(int row, int col) {
-        m_gridPos.row = row;
-        m_gridPos.col = col;
+        GridPos = new GridPos(row, col);
+    }
+
+    public MapGrid(Vector2Int pos)
+    {
+        GridPos = new GridPos(pos.y, pos.x);
     }
 }

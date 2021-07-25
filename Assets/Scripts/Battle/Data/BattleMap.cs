@@ -3,27 +3,9 @@ using UnityEngine;
 
 public class BattleMap : EntityBase 
 {
-    private int m_width = 0;
-    private int m_height = 0;
+    public int Width = 0;
+    public int Height = 0;
 
-    public int Width 
-    {
-        get => m_width;
-        set 
-        {
-            if(value<0) value = 0;
-            m_width = value;
-        }
-    }
-    public int Height 
-    {
-        get => m_height;
-        set 
-        {
-            if(value<0) value = 0;
-            m_height = value;
-        }
-    }
     public MapGrid[,] mapGrids;
     public List<MapGrid> normalGrids;
     public List<MapGrid> obstacleGrids;

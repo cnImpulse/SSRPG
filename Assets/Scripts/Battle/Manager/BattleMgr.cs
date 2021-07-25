@@ -12,9 +12,35 @@ public class BattleMgr : Singleton<BattleMgr>
     public List<BattleUnit> amityUnits;
     public List<BattleUnit> enemyUnits;
 
+    public BattleRenderer battleRenderer;
+
     public void CreatBattle(BattleCfg battleCfg) 
     {
         InitBattleData(battleCfg);
+    }
+
+    public void CreatBattle(BattleData data)
+    {
+        battleMap = data.mapData;
+        amityUnits = new List<BattleUnit>();
+        enemyUnits = new List<BattleUnit>();
+        foreach(var pos in data.amitys)
+        {
+            amityUnits.Add(new BattleUnit(pos, BattleCamp.Amity));
+        }
+        foreach (var pos in data.amitys)
+        {
+            enemyUnits.Add(new BattleUnit(pos, BattleCamp.Enemy));
+        }
+
+        CreatRenderer(data);
+    }
+
+    public void CreatRenderer(BattleData data)
+    {
+        battleRenderer = GameObject.Instantiate(Resources.Load<BattleRenderer>("Prefabs/Battle"));
+        battleRenderer.name = "Battle";
+        battleRenderer.Init(data);
     }
 
     #region InitData

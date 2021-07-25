@@ -5,23 +5,17 @@ using UnityEngine.Tilemaps;
 
 public class BattleMapRenderer : MonoBehaviour
 {
-    private BattleMap battleMap;
+    private BattleMap mapData;
     private Tilemap tilemap;
+    private Tile normal, obstacle;
 
-    private void Start()
-    {
-        tilemap = GetComponent<Tilemap>();
-
-        GetBattleMapData();
-    }
-
-    private void OnGUI()
-    {
-        if (GUI.Button(new Rect(0, 0, 180, 100), "Next"))
-        {
-            GetBattleMapData();
-        }
-    }
+    //private void OnGUI()
+    //{
+    //    if (GUI.Button(new Rect(0, 0, 180, 100), "Next"))
+    //    {
+    //        GetBattleMapData();
+    //    }
+    //}
 
     private void GetBattleMapData()
     {
@@ -30,32 +24,41 @@ public class BattleMapRenderer : MonoBehaviour
         battleCfg.mapWidth = 100;
         battleCfg.mapHeight = 100;
         BattleMgr.Instance.CreatBattle(battleCfg);
-        battleMap = BattleMgr.Instance.battleMap;
+        mapData = BattleMgr.Instance.battleMap;
         //battleMap.RandomGenerateMapCell();
-        battleMap.RandomGenerateMap();
-        RefreshBattleMap();
+        mapData.RandomGenerateMap();
+        RefreshMap();
     }
 
-    public void RefreshBattleMap()
+    public void Init(BattleMap data)
     {
-        if (battleMap == null) return;
+        tilemap = GetComponent<Tilemap>();
+        normal = Resources.Load("white") as Tile;
+        obstacle = Resources.Load("black") as Tile;
 
-        for (int row = 0; row < battleMap.Height; row++)
+        mapData = data;
+        RefreshMap();
+    }
+
+    private void RefreshMap()
+    {
+        if (mapData == null) return;
+
+        for (int row = 0; row < mapData.Height; row++)
         {
-            for (int col = 0; col < battleMap.Width; ++col)
+            for (int col = 0; col < mapData.Width; ++col)
             {
-                MapGrid mapGrid = battleMap.mapGrids[row, col];
-                if (mapGrid.GridType == GridType.None) continue;
+                MapGrid grid = mapData.mapGrids[row, col];
+                if (grid == null || grid.GridType == GridType.None) continue;
 
                 Tile tile = default;
-                switch (mapGrid.GridType)
+                switch (grid.GridType)
                 {
-                    case GridType.Normal: tile = Resources.Load("white") as Tile; ; break;
-                    case GridType.Obstacle: tile = Resources.Load("black") as Tile; break;
+                    case GridType.Normal: tile = normal; ; break;
+                    case GridType.Obstacle: tile = obstacle; break;
                 }
-                tilemap.SetTile(mapGrid.GridPosVec3Int, tile);
+                tilemap.SetTile(grid.GridPosVec3Int, tile);
             }
         }
-        tilemap.transform.position = new Vector3(-battleMap.Width / 2, -battleMap.Height / 2, 0);
     }
 }
