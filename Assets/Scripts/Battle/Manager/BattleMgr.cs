@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct BattleCfg {
@@ -8,7 +9,8 @@ public struct BattleCfg {
 public class BattleMgr : Singleton<BattleMgr> 
 {
     public BattleMap battleMap;
-    public BattleUnit[] battleUnits;
+    public List<BattleUnit> amityUnits;
+    public List<BattleUnit> enemyUnits;
 
     public void CreatBattle(BattleCfg battleCfg) 
     {
@@ -30,9 +32,10 @@ public class BattleMgr : Singleton<BattleMgr>
         battleMap = new BattleMap(width, height);
     }
 
-    private void InitBattleUnits() 
+    private void InitBattleUnits()
     {
-        
+        amityUnits = new List<BattleUnit>();
+        enemyUnits = new List<BattleUnit>();
     }
     #endregion
 }

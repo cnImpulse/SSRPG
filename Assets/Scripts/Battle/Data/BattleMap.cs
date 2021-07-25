@@ -74,6 +74,13 @@ public class BattleMap : EntityBase
         return mapGrids[gridPos.y, gridPos.x];
     }
 
+    public bool SetMapGrid(Vector2Int position, GridType gridType)
+    {
+        if (!IsInMap(position)) return false;
+        GetMapGrid(position).GridType = gridType;
+        return true;
+    }
+
     public bool IsInMap(Vector2Int gridPos)
     {
         if (gridPos.x < 0 || gridPos.x >= Width || gridPos.y < 0 || gridPos.y >= Height)
