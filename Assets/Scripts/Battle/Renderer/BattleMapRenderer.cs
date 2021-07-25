@@ -31,6 +31,8 @@ public class BattleMapRenderer : MonoBehaviour
         battleCfg.mapHeight = 100;
         BattleMgr.Instance.CreatBattle(battleCfg);
         battleMap = BattleMgr.Instance.battleMap;
+        //battleMap.RandomGenerateMapCell();
+        battleMap.RandomGenerateMap();
         RefreshBattleMap();
     }
 
