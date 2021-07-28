@@ -6,13 +6,22 @@ public struct BattleCfg {
     public int mapHeight;
 }
 
-public class BattleMgr : Singleton<BattleMgr> 
+public enum BattleState
+{
+    None,       // 战斗未开始
+    Fighting,   // 战斗中
+    End         // 战斗结束
+}
+
+public class BattleMgr : Singleton<BattleMgr>
 {
     public BattleMap battleMap;
     public List<BattleUnit> amityUnits;
     public List<BattleUnit> enemyUnits;
 
     public BattleRenderer battleRenderer;
+
+    public BattleState battleState;
 
     public void CreatBattle(BattleCfg battleCfg) 
     {
@@ -56,4 +65,19 @@ public class BattleMgr : Singleton<BattleMgr>
         enemyUnits = new List<BattleUnit>();
     }
     #endregion
+
+    // 开始战斗时调用
+    public void OnStartBattle()
+    {
+        if (battleState != BattleState.None) return;
+
+        battleState = BattleState.Fighting;
+
+    }
+
+    // 鼠标点击战斗单位时调用
+    public void OnPointBattleUnit()
+    {
+
+    }
 }
