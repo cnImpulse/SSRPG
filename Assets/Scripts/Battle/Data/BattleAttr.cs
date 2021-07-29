@@ -1,6 +1,7 @@
 public class BattleAttr
 {
-    private int hp = 10;
-    private int hpLimit = 10;
-    private int atk = 1;
+    public int hp       = 10;
+    public int hpLimit  = 10;
+    public int atk      = 1;
+    public int mov      = 4;
 }

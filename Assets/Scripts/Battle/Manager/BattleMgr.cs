@@ -74,10 +74,4 @@ public class BattleMgr : Singleton<BattleMgr>
         battleState = BattleState.Fighting;
 
     }
-
-    // 鼠标点击战斗单位时调用
-    public void OnPointBattleUnit()
-    {
-
-    }
 }

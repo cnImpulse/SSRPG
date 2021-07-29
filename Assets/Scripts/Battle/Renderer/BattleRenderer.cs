@@ -40,4 +40,17 @@ public class BattleRenderer : MonoBehaviour
             }
         }
     }
+
+    private void OnPointBattleUnit(BattleUnit unit)
+    {
+        ShowCanMoveGrids(unit);
+    }
+
+    private void ShowCanMoveGrids(BattleUnit unit)
+    {
+        Vector2Int center = unit.position;
+        int mov = unit.battleAttr.mov;
+
+
+    }
 }

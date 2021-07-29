@@ -6,7 +6,7 @@ public class Test : MonoBehaviour
 {
     private void Start()
     {
-        string path = Application.dataPath + "/BattleData/default.json";
+        string path = Application.dataPath + "/BattleDatas/default.json";
         StreamReader sr = new StreamReader(path);
         string json = sr.ReadLine();
         BattleData battleData = JsonConvert.DeserializeObject<BattleData>(json);
