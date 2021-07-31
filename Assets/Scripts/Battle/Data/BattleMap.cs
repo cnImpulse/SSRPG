@@ -40,7 +40,7 @@ public class BattleMap : EntityBase
     }
 
     public int GetNeighborsTypeCount(Vector2Int position, Vector2Int[] dirArray, GridType gridType)
-        {
+    {
         int count = 0;
         List<MapGrid> neighbors = GetNeighbors(position, dirArray);
         foreach (var neighbor in neighbors)
@@ -100,13 +100,13 @@ public class BattleMap : EntityBase
                 ++roadNum;
             }
             List<MapGrid> neighbors = GetNeighbors(position, dirArray4);
-            position = neighbors[Random.Range(0, neighbors.Count)].GridPosVec2Int;
+            position = neighbors[Random.Range(0, neighbors.Count)].Position;
         }
 
         // »­Ç½±Ú
         foreach(var grid in normalGrids)
         {
-            List<MapGrid> neighbors = GetNeighbors(grid.GridPosVec2Int, dirArray4);
+            List<MapGrid> neighbors = GetNeighbors(grid.Position, dirArray4);
             foreach(var neighbor in neighbors)
             {
                 if (neighbor.GridType == GridType.None)
@@ -123,7 +123,7 @@ public class BattleMap : EntityBase
         {
             foreach (var grid in obstacleGrids)
             {
-                int normalCount = GetNeighborsTypeCount(grid.GridPosVec2Int, dirArray8, GridType.Normal);
+                int normalCount = GetNeighborsTypeCount(grid.Position, dirArray8, GridType.Normal);
                 if (normalCount >= 7) needRemove.Add(grid);
             }
             foreach (var grid in needRemove)
@@ -163,8 +163,8 @@ public class BattleMap : EntityBase
                 for (int col = 0; col < Width; ++col)
                 {
                     MapGrid grid = mapGrids[row, col];
-                    int count = 8 - GetNeighbors(grid.GridPosVec2Int, dirArray8).Count +
-                        GetNeighborsTypeCount(grid.GridPosVec2Int, dirArray8, GridType.Obstacle);
+                    int count = 8 - GetNeighbors(grid.Position, dirArray8).Count +
+                        GetNeighborsTypeCount(grid.Position, dirArray8, GridType.Obstacle);
                     if (count > 4 && grid.GridType == GridType.Normal)
                         needSetObstacle.Add(grid);
                     else if (count < 4 && grid.GridType == GridType.Obstacle)

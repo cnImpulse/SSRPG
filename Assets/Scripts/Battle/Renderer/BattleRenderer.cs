@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BattleRenderer : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class BattleRenderer : MonoBehaviour
 
     BattleMapRenderer mapRenderer;
     BattleUnitsRenderer unitsRenderer;
+    Tilemap canMoveArea;
+    TileBase streak;
     GameObject selectEff;
 
     public void Init(BattleData data)
@@ -16,6 +19,8 @@ public class BattleRenderer : MonoBehaviour
 
         mapRenderer = GetComponentInChildren<BattleMapRenderer>();
         unitsRenderer = GetComponentInChildren<BattleUnitsRenderer>();
+        canMoveArea = transform.Find("CanMoveArea").GetComponent<Tilemap>();
+        streak = Resources.Load<TileBase>("streak");
         selectEff = transform.Find("SelectEff").gameObject;
         selectEff.SetActive(false);
 
@@ -37,20 +42,29 @@ public class BattleRenderer : MonoBehaviour
                 selectEff.SetActive(true);
                 Vector3 pos = new Vector3(0.5f + pointPos.x, 0.5f + pointPos.y, 0);
                 selectEff.transform.position = pos;
+                OnSelectBattleUnit(BattleMgr.Instance.GetBattleUnit(pointPos));
             }
         }
     }
 
-    private void OnPointBattleUnit(BattleUnit unit)
+    private void OnUnSelectBattleUnit()
     {
-        ShowCanMoveGrids(unit);
+        canMoveArea.ClearAllTiles();
     }
 
-    private void ShowCanMoveGrids(BattleUnit unit)
+    private void OnSelectBattleUnit(BattleUnit battleUnit)
     {
-        Vector2Int center = unit.position;
-        int mov = unit.battleAttr.mov;
+        if (battleUnit == null) return;
+        ShowCanMoveGrids(battleUnit);
+    }
 
-
+    private void ShowCanMoveGrids(BattleUnit battleUnit)
+    {
+        canMoveArea.ClearAllTiles();
+        List<Vector2Int> canMoves = BattleMgr.Instance.GetCanMovePos(battleUnit);
+        foreach(var temp in canMoves)
+        {
+            canMoveArea.SetTile(Utl.ToVec3Int(temp), streak);
+        }
     }
 }

@@ -19,7 +19,7 @@ public enum GridType {
 
 public class MapGrid : EntityBase {
     public GridPos GridPos { get; set; }
-    public Vector2Int GridPosVec2Int
+    public Vector2Int Position
     {
         get
         {
@@ -33,6 +33,8 @@ public class MapGrid : EntityBase {
             return new Vector3Int(GridPos.col, GridPos.row, 0);
         }
     }
+    public bool IsObstacle => GridType == GridType.Obstacle;
+
     public GridType GridType { get; set; }
 
     private MapGrid() { }
