@@ -39,32 +39,71 @@ public class BattleRenderer : MonoBehaviour
             Vector2Int pointPos = Utl.ToVec2Int(worldPos);
             if (battleData.mapData.IsInMap(pointPos))
             {
-                selectEff.SetActive(true);
-                Vector3 pos = new Vector3(0.5f + pointPos.x, 0.5f + pointPos.y, 0);
-                selectEff.transform.position = pos;
-                OnSelectBattleUnit(BattleMgr.Instance.GetBattleUnit(pointPos));
+                OnPointMap(pointPos);
             }
         }
+    }
+
+    private void OnPointMap(Vector2Int pos)
+    {
+        ShowSelectEff(pos);
+
+        BattleUnit battleUnit = BattleMgr.Instance.GetBattleUnit(pos);
+        if (battleUnit != null)
+        {
+            OnSelectBattleUnit(battleUnit);
+            return;
+        }
+        if (selectUnit != null)
+        {
+            if (canMovePos.Contains(pos))
+            {
+                OnMoveBattleUnit(pos);
+            }
+            OnUnSelectBattleUnit();
+        }
+    }
+
+    private void OnMoveBattleUnit(Vector2Int pos)
+    {
+        if (selectUnit == null) return;
+        unitsRenderer.ChangeBattleUnitPos(selectUnit, pos);
     }
 
     private void OnUnSelectBattleUnit()
     {
         canMoveArea.ClearAllTiles();
+        canMovePos.Clear();
+        selectUnit = null;
+        selectEff.SetActive(false);
     }
 
     private void OnSelectBattleUnit(BattleUnit battleUnit)
     {
-        if (battleUnit == null) return;
+        selectUnit = battleUnit;
         ShowCanMoveGrids(battleUnit);
     }
 
+    BattleUnit selectUnit = null;
+    List<Vector2Int> canMovePos = new List<Vector2Int>();
     private void ShowCanMoveGrids(BattleUnit battleUnit)
     {
         canMoveArea.ClearAllTiles();
-        List<Vector2Int> canMoves = BattleMgr.Instance.GetCanMovePos(battleUnit);
-        foreach(var temp in canMoves)
+        canMovePos.Clear();
+        List<Vector2Int> canPass = BattleMgr.Instance.GetCanPassPos(battleUnit);
+        foreach(var pos in canPass)
         {
-            canMoveArea.SetTile(Utl.ToVec3Int(temp), streak);
+            if (BattleMgr.Instance.IsGridCanMove(pos))
+            {
+                canMoveArea.SetTile(Utl.ToVec3Int(pos), streak);
+                canMovePos.Add(pos);
+            }
         }
+    }
+
+    private void ShowSelectEff(Vector2Int pos)
+    {
+        selectEff.SetActive(true);
+        selectEff.transform.position = new Vector3(0.5f + pos.x, 0.5f + pos.y, 0); ;
     }
 }

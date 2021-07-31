@@ -80,12 +80,12 @@ public class BattleMgr : Singleton<BattleMgr>
     }
 
     // 广度优先搜索
-    public List<Vector2Int> GetCanMovePos(BattleUnit battleUnit)
+    public List<Vector2Int> GetCanPassPos(BattleUnit battleUnit)
     {
         List<Vector2Int> open = new List<Vector2Int>();
         List<Vector2Int> close = new List<Vector2Int>();
         open.Add(battleUnit.position);
-        for (int i = 0; i < battleUnit.battleAttr.mov; ++i)
+        for (int i = 0; i <= battleUnit.battleAttr.mov; ++i)
         {
             int len = open.Count;
             if (len == 0) break;
@@ -109,14 +109,14 @@ public class BattleMgr : Singleton<BattleMgr>
         List<MapGrid> neighbors = battleMap.GetNeighbors(pos, BattleMap.dirArray4);
         foreach(var neighbor in neighbors)
         {
-            if (IsGridCanArrive(neighbor.Position, battleUnit))
+            if (IsGridCanPass(neighbor.Position, battleUnit))
                 res.Add(neighbor.Position);
         }
         return res;
     }
 
     // 敌人会阻碍移动
-    public bool IsGridCanArrive(Vector2Int destination, BattleUnit battleUnit)
+    public bool IsGridCanPass(Vector2Int destination, BattleUnit battleUnit)
     {
         MapGrid grid = battleMap.GetMapGrid(destination);
         if(grid == null || grid.IsObstacle) return false;
@@ -127,13 +127,22 @@ public class BattleMgr : Singleton<BattleMgr>
         else if (battleUnit.battleCamp == BattleCamp.Enemy)
             obstacleUnits = amityUnits;
 
-        foreach(var obstacle in obstacleUnits) {
+        foreach(var obstacle in obstacleUnits) 
+        {
             if (destination == obstacle.position)
                 return false;
         }
         return true;
     }
 
+    public bool IsGridCanMove(Vector2Int destination)
+    {
+        MapGrid grid = battleMap.GetMapGrid(destination);
+        if (grid == null || grid.IsObstacle) return false;
+
+        if (GetBattleUnit(destination) == null) return true;
+        return false;
+    }
 
     public BattleUnit GetBattleUnit(Vector2Int pos)
     {
