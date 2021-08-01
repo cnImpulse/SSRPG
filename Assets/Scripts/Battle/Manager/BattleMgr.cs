@@ -103,6 +103,20 @@ public class BattleMgr : Singleton<BattleMgr>
         return close;
     }
 
+    public List<Vector2Int> GetCanAttackPos(BattleUnit battleUnit)
+    {
+        List<Vector2Int> res = new List<Vector2Int>();
+        List<BattleUnit> notAttacks = GetAmitys(battleUnit.battleCamp);
+        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.battleAttr.atkRange, BattleMap.dirArray4);
+        foreach(var grid in neighbors)
+        {
+            if (grid.IsObstacle) continue;
+            
+        }
+        return res;
+    }
+
+
     public List<Vector2Int> GetCanMoveNeighbors(Vector2Int pos, BattleUnit battleUnit)
     {
         List<Vector2Int> res = new List<Vector2Int>();
@@ -121,18 +135,29 @@ public class BattleMgr : Singleton<BattleMgr>
         MapGrid grid = battleMap.GetMapGrid(destination);
         if(grid == null || grid.IsObstacle) return false;
 
-        List<BattleUnit> obstacleUnits = null;
-        if (battleUnit.battleCamp == BattleCamp.Amity)
-            obstacleUnits = enemyUnits;
-        else if (battleUnit.battleCamp == BattleCamp.Enemy)
-            obstacleUnits = amityUnits;
-
+        List<BattleUnit> obstacleUnits = GetEnemys(battleUnit.battleCamp);
         foreach(var obstacle in obstacleUnits) 
         {
             if (destination == obstacle.position)
                 return false;
         }
         return true;
+    }
+
+    private List<BattleUnit> GetEnemys(BattleCamp camp)
+    {
+        if (camp == BattleCamp.Amity)
+            return enemyUnits;
+        else
+            return amityUnits;
+    }
+
+    private List<BattleUnit> GetAmitys(BattleCamp camp)
+    {
+        if (camp == BattleCamp.Enemy)
+            return enemyUnits;
+        else
+            return amityUnits;
     }
 
     public bool IsGridCanMove(Vector2Int destination)

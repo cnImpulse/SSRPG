@@ -27,16 +27,41 @@ public class BattleMap : EntityBase
         }
     }
 
-    public List<MapGrid> GetNeighbors(Vector2Int position, Vector2Int[] dirArray)
+    public List<MapGrid> GetNeighbors(Vector2Int center, Vector2Int[] dirArray)
     {
-        if (!IsInMap(position)) return null;
+        if (!IsInMap(center)) return null;
         List<MapGrid> neighbors = new List<MapGrid>();
         for (int i = 0; i < dirArray.Length; ++i)
         {
-            MapGrid grid = GetMapGrid(position + dirArray[i]);
+            MapGrid grid = GetMapGrid(center + dirArray[i]);
             if (grid != null) neighbors.Add(grid);
         }
         return neighbors;
+    }
+
+    public List<MapGrid> GetNeighborsInRange(Vector2Int center, int distance, Vector2Int[] dirArray)
+    {
+        MapGrid grid = GetMapGrid(center);
+        if (grid == null) return null;
+        List<MapGrid> open = new List<MapGrid>();
+        List<MapGrid> close = new List<MapGrid>();
+        open.Add(grid);
+        for (int i = 0; i <= distance; ++i)
+        {
+            int len = open.Count;
+            if (len == 0) break;
+            for (int j = 0; j < len; ++j)
+            {
+                List<MapGrid> neighbors = GetNeighbors(center, dirArray);
+                foreach (var neigh in neighbors)
+                {
+                    if (!close.Contains(neigh))
+                        open.Add(neigh);
+                }
+                close.Add(open[j]);
+            }
+        }
+        return close;
     }
 
     public int GetNeighborsTypeCount(Vector2Int position, Vector2Int[] dirArray, GridType gridType)

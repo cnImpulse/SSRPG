@@ -9,7 +9,7 @@ public class BattleRenderer : MonoBehaviour
 
     BattleMapRenderer mapRenderer;
     BattleUnitsRenderer unitsRenderer;
-    Tilemap canMoveArea;
+    Tilemap gridsEff;
     TileBase streak;
     GameObject selectEff;
 
@@ -19,7 +19,7 @@ public class BattleRenderer : MonoBehaviour
 
         mapRenderer = GetComponentInChildren<BattleMapRenderer>();
         unitsRenderer = GetComponentInChildren<BattleUnitsRenderer>();
-        canMoveArea = transform.Find("CanMoveArea").GetComponent<Tilemap>();
+        gridsEff = transform.Find("CanMoveArea").GetComponent<Tilemap>();
         streak = Resources.Load<TileBase>("streak");
         selectEff = transform.Find("SelectEff").gameObject;
         selectEff.SetActive(false);
@@ -72,7 +72,7 @@ public class BattleRenderer : MonoBehaviour
 
     private void OnUnSelectBattleUnit()
     {
-        canMoveArea.ClearAllTiles();
+        gridsEff.ClearAllTiles();
         canMovePos.Clear();
         selectUnit = null;
         selectEff.SetActive(false);
@@ -88,17 +88,24 @@ public class BattleRenderer : MonoBehaviour
     List<Vector2Int> canMovePos = new List<Vector2Int>();
     private void ShowCanMoveGrids(BattleUnit battleUnit)
     {
-        canMoveArea.ClearAllTiles();
+        gridsEff.ClearAllTiles();
         canMovePos.Clear();
         List<Vector2Int> canPass = BattleMgr.Instance.GetCanPassPos(battleUnit);
         foreach(var pos in canPass)
         {
             if (BattleMgr.Instance.IsGridCanMove(pos))
             {
-                canMoveArea.SetTile(Utl.ToVec3Int(pos), streak);
+                gridsEff.SetTile(Utl.ToVec3Int(pos), streak);
+                gridsEff.SetColor(Utl.ToVec3Int(pos), Color.yellow);
                 canMovePos.Add(pos);
             }
         }
+    }
+
+    List<Vector2Int> canAttack = new List<Vector2Int>();
+    private void ShowCanAttackGrids(BattleUnit battleUnit)
+    {
+        
     }
 
     private void ShowSelectEff(Vector2Int pos)
