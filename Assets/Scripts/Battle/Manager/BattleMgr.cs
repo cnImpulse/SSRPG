@@ -9,7 +9,8 @@ public struct BattleCfg {
 public enum BattleState
 {
     None,       // 战斗未开始
-    Fighting,   // 战斗中
+    Amity,      // 我方回合
+    Enemy,      // 敌方回合
     End         // 战斗结束
 }
 
@@ -19,8 +20,6 @@ public class BattleMgr : Singleton<BattleMgr>
     public BattleTeam battleTeam;
 
     public BattleRenderer battleRenderer;
-
-    public BattleState battleState;
 
     public void CreatBattle(BattleCfg battleCfg) 
     {
@@ -63,9 +62,10 @@ public class BattleMgr : Singleton<BattleMgr>
     {
         if (battleState != BattleState.None) return;
 
-        battleState = BattleState.Fighting;
+        battleState = BattleState.Amity;
     }
 
+    // Pass表示敌人会阻碍通过
     // 广度优先搜索
     public List<Vector2Int> GetCanPassPos(BattleUnit battleUnit)
     {
@@ -78,7 +78,7 @@ public class BattleMgr : Singleton<BattleMgr>
             if (len == 0) break;
             for (int j = 0; j < len; ++j)
             {
-                List<Vector2Int> neighbors = GetCanMoveNeighbors(open[j], battleUnit);
+                List<Vector2Int> neighbors = GetCanPassNeighbors(open[j], battleUnit);
                 foreach(var neigh in neighbors)
                 {
                     if (!close.Contains(neigh))
@@ -103,8 +103,7 @@ public class BattleMgr : Singleton<BattleMgr>
         return res;
     }
 
-
-    public List<Vector2Int> GetCanMoveNeighbors(Vector2Int pos, BattleUnit battleUnit)
+    public List<Vector2Int> GetCanPassNeighbors(Vector2Int pos, BattleUnit battleUnit)
     {
         List<Vector2Int> res = new List<Vector2Int>();
         List<MapGrid> neighbors = battleMap.GetNeighbors(pos, BattleMap.dirArray4);
@@ -138,5 +137,39 @@ public class BattleMgr : Singleton<BattleMgr>
 
         if (battleTeam.GetBattleUnit(destination) == null) return true;
         return false;
+    }
+
+    #region 战斗状态
+
+    public BattleState battleState = BattleState.None;
+    public List<MapGrid> canMoveGrids = new List<MapGrid>();
+
+    #endregion
+
+    #region 事件
+
+    private void OnPointMapGrid(MapGrid grid)
+    {
+
+    }
+
+    private void OnPointBattleUnit(BattleUnit battleUnit)
+    {
+        if (!battleUnit.CanAction()) return;
+
+        SetCanMoveGrids(battleUnit);
+    }
+
+    #endregion
+
+    private void SetCanMoveGrids(BattleUnit battleUnit)
+    {
+        canMoveGrids.Clear();
+        List<Vector2Int> canPass = GetCanPassPos(battleUnit);
+        foreach(var pos in canPass)
+        {
+            MapGrid grid = battleMap.GetMapGrid(pos);
+            if (IsGridCanMove(pos)) canMoveGrids.Add(grid);
+        }
     }
 }

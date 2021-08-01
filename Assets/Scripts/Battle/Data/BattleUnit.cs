@@ -12,4 +12,11 @@ public class BattleUnit : EntityBase
         battleCamp = camp;
         battleAttr = new BattleAttr();
     }
+
+    public bool CanAction()
+    {
+        if (BattleMgr.Instance.battleState.ToString() != battleCamp.ToString() || battleAttr.act == 0)
+            return false;
+        return true;
+    }
 }

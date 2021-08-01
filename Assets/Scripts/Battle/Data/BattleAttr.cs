@@ -5,5 +5,5 @@ public class BattleAttr
     public int atk          = 1;
     public int atkRange     = 1;
     public int mov          = 5;
-    public int energy       = 1;
+    public int act          = 1;
 }
