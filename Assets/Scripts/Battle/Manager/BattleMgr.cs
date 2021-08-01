@@ -16,8 +16,7 @@ public enum BattleState
 public class BattleMgr : Singleton<BattleMgr>
 {
     public BattleMap battleMap;
-    public List<BattleUnit> amityUnits;
-    public List<BattleUnit> enemyUnits;
+    public BattleTeam battleTeam;
 
     public BattleRenderer battleRenderer;
 
@@ -31,13 +30,7 @@ public class BattleMgr : Singleton<BattleMgr>
     public void CreatBattle(BattleData data)
     {
         battleMap = data.mapData;
-        amityUnits = new List<BattleUnit>();
-        enemyUnits = new List<BattleUnit>();
-        foreach(var t in data.unitsData)
-        {
-            if (t.battleCamp == BattleCamp.Amity) amityUnits.Add(t);
-            else if(t.battleCamp == BattleCamp.Enemy) enemyUnits.Add(t);
-        }
+        battleTeam = new BattleTeam(data.unitsData);
 
         CreatRenderer(data);
     }
@@ -56,7 +49,6 @@ public class BattleMgr : Singleton<BattleMgr>
         int mapHeight = battleCfg.mapHeight;
 
         InitBattleMap(mapWidth, mapHeight);
-        InitBattleUnits();
     }
 
     private void InitBattleMap(int width, int height) 
@@ -64,11 +56,6 @@ public class BattleMgr : Singleton<BattleMgr>
         battleMap = new BattleMap(width, height);
     }
 
-    private void InitBattleUnits()
-    {
-        amityUnits = new List<BattleUnit>();
-        enemyUnits = new List<BattleUnit>();
-    }
     #endregion
 
     // 开始战斗时调用
@@ -106,7 +93,7 @@ public class BattleMgr : Singleton<BattleMgr>
     public List<Vector2Int> GetCanAttackPos(BattleUnit battleUnit)
     {
         List<Vector2Int> res = new List<Vector2Int>();
-        List<BattleUnit> notAttacks = GetAmitys(battleUnit.battleCamp);
+        List<BattleUnit> notAttacks = battleTeam.GetAmitys(battleUnit.battleCamp);
         List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.battleAttr.atkRange, BattleMap.dirArray4);
         foreach(var grid in neighbors)
         {
@@ -135,7 +122,7 @@ public class BattleMgr : Singleton<BattleMgr>
         MapGrid grid = battleMap.GetMapGrid(destination);
         if(grid == null || grid.IsObstacle) return false;
 
-        List<BattleUnit> obstacleUnits = GetEnemys(battleUnit.battleCamp);
+        List<BattleUnit> obstacleUnits = battleTeam.GetEnemys(battleUnit.battleCamp);
         foreach(var obstacle in obstacleUnits) 
         {
             if (destination == obstacle.position)
@@ -144,37 +131,12 @@ public class BattleMgr : Singleton<BattleMgr>
         return true;
     }
 
-    private List<BattleUnit> GetEnemys(BattleCamp camp)
-    {
-        if (camp == BattleCamp.Amity)
-            return enemyUnits;
-        else
-            return amityUnits;
-    }
-
-    private List<BattleUnit> GetAmitys(BattleCamp camp)
-    {
-        if (camp == BattleCamp.Enemy)
-            return enemyUnits;
-        else
-            return amityUnits;
-    }
-
     public bool IsGridCanMove(Vector2Int destination)
     {
         MapGrid grid = battleMap.GetMapGrid(destination);
         if (grid == null || grid.IsObstacle) return false;
 
-        if (GetBattleUnit(destination) == null) return true;
+        if (battleTeam.GetBattleUnit(destination) == null) return true;
         return false;
-    }
-
-    public BattleUnit GetBattleUnit(Vector2Int pos)
-    {
-        foreach(var t in amityUnits)
-            if (t.position == pos) return t;
-        foreach (var t in enemyUnits)
-            if (t.position == pos) return t;
-        return null;
     }
 }

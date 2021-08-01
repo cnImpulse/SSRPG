@@ -1,11 +1,5 @@
 using UnityEngine;
 
-public enum BattleCamp
-{
-    Amity,      //友好
-    Enemy,      //敌对
-}
-
 public class BattleUnit : EntityBase
 {
     public Vector2Int position;

@@ -48,7 +48,7 @@ public class BattleRenderer : MonoBehaviour
     {
         ShowSelectEff(pos);
 
-        BattleUnit battleUnit = BattleMgr.Instance.GetBattleUnit(pos);
+        BattleUnit battleUnit = BattleMgr.Instance.battleTeam.GetBattleUnit(pos);
         if (battleUnit != null)
         {
             OnSelectBattleUnit(battleUnit);
