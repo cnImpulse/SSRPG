@@ -21,8 +21,7 @@ public class BattleUnitsRenderer : MonoBehaviour
 
     public void Refresh()
     {
-        if (unitsData == null) return;
-
+        tilemap.ClearAllTiles();
         foreach(var unit in unitsData)
         {
             Tile tile = default;
@@ -33,13 +32,5 @@ public class BattleUnitsRenderer : MonoBehaviour
             }
             tilemap.SetTile(Utl.ToVec3Int(unit.position), tile);
         }
-    }
-
-    public void ChangeBattleUnitPos(BattleUnit battleUnit, Vector2Int pos)
-    {
-        Tile tile = tilemap.GetTile<Tile>(Utl.ToVec3Int(battleUnit.position));
-        tilemap.SetTile(Utl.ToVec3Int(battleUnit.position), null);
-        tilemap.SetTile(Utl.ToVec3Int(pos), tile);
-        battleUnit.position = pos;
     }
 }

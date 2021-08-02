@@ -19,4 +19,9 @@ public class BattleUnit : EntityBase
             return false;
         return true;
     }
+
+    public void Move(MapGrid grid)
+    {
+        position = grid.Position;
+    }
 }

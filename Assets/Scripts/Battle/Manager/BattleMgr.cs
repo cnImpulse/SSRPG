@@ -143,21 +143,48 @@ public class BattleMgr : Singleton<BattleMgr>
 
     public BattleState battleState = BattleState.None;
     public List<MapGrid> canMoveGrids = new List<MapGrid>();
+    public BattleUnit selectUnit = null;
 
     #endregion
 
     #region ÊÂ¼þ
 
-    private void OnPointMapGrid(MapGrid grid)
+    public void OnPointMapGrid(MapGrid grid)
     {
+        if(selectUnit != null)
+        {
+            if (canMoveGrids.Contains(grid))
+            {
+                selectUnit.Move(grid);
+            }
+            OnUnSelectBattleUnit();
+        }
 
+        OnDataChange();
     }
 
-    private void OnPointBattleUnit(BattleUnit battleUnit)
+    public void OnPointBattleUnit(BattleUnit battleUnit)
     {
-        if (!battleUnit.CanAction()) return;
+        OnSelectBattleUnit(battleUnit);
 
+        OnDataChange();
+    }
+
+    private void OnSelectBattleUnit(BattleUnit battleUnit)
+    {
+        selectUnit = battleUnit;
         SetCanMoveGrids(battleUnit);
+    }
+
+    private void OnUnSelectBattleUnit()
+    {
+        selectUnit = null;
+        canMoveGrids.Clear();
+    }
+
+    private void OnDataChange()
+    {
+        battleRenderer.Refresh();
     }
 
     #endregion

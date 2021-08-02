@@ -18,6 +18,7 @@ public class BattleRenderer : MonoBehaviour
 
         mapRenderer = GetComponentInChildren<BattleMapRenderer>();
         unitsRenderer = GetComponentInChildren<BattleUnitsRenderer>();
+        actionRenderer = GetComponentInChildren<ActionRangeRenderer>();
         selectEff = transform.Find("SelectEff").gameObject;
         selectEff.SetActive(false);
 
@@ -34,57 +35,39 @@ public class BattleRenderer : MonoBehaviour
         {
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2Int pointPos = Utl.ToVec2Int(worldPos);
-            if (battleData.mapData.IsInMap(pointPos))
+            BattleUnit battleUnit = BattleMgr.Instance.battleTeam.GetBattleUnit(pointPos);
+            if(battleUnit != null)
             {
-                OnPointMap(pointPos);
+                BattleMgr.Instance.OnPointBattleUnit(battleUnit);
+            }
+            else
+            {
+                MapGrid grid = battleData.mapData.GetMapGrid(pointPos);
+                if (grid != null)
+                {
+                    BattleMgr.Instance.OnPointMapGrid(grid);
+                }
             }
         }
     }
 
-    private void OnPointMap(Vector2Int pos)
+    public void Refresh()
     {
-        ShowSelectEff(pos);
+        actionRenderer.Refresh();
+        unitsRenderer.Refresh();
+        RefreshSelectEff();
+    }
 
-        BattleUnit battleUnit = BattleMgr.Instance.battleTeam.GetBattleUnit(pos);
-        if (battleUnit != null)
+    private void RefreshSelectEff()
+    {
+        BattleUnit battleUnit = BattleMgr.Instance.selectUnit;
+        if(battleUnit == null)
         {
-            OnSelectBattleUnit(battleUnit);
+            selectEff.SetActive(false);
             return;
         }
-        if (selectUnit != null)
-        {
-            if (canMovePos.Contains(pos))
-            {
-                OnMoveBattleUnit(pos);
-            }
-            OnUnSelectBattleUnit();
-        }
-    }
 
-    private void OnMoveBattleUnit(Vector2Int pos)
-    {
-        if (selectUnit == null) return;
-        unitsRenderer.ChangeBattleUnitPos(selectUnit, pos);
-    }
-
-    private void OnUnSelectBattleUnit()
-    {
-        canMovePos.Clear();
-        selectUnit = null;
-        selectEff.SetActive(false);
-    }
-
-    private void OnSelectBattleUnit(BattleUnit battleUnit)
-    {
-        selectUnit = battleUnit;
-    }
-
-    BattleUnit selectUnit = null;
-    List<Vector2Int> canMovePos = new List<Vector2Int>();
-
-    private void ShowSelectEff(Vector2Int pos)
-    {
         selectEff.SetActive(true);
-        selectEff.transform.position = new Vector3(0.5f + pos.x, 0.5f + pos.y, 0); ;
+        selectEff.transform.position = new Vector3(0.5f + battleUnit.position.x, 0.5f + battleUnit.position.y, 0);
     }
 }
