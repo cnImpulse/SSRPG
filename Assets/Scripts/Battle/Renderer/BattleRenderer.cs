@@ -8,7 +8,7 @@ public class BattleRenderer : MonoBehaviour
     BattleData battleData;
 
     BattleMapRenderer mapRenderer;
-    BattleUnitsRenderer unitsRenderer;
+    BattleTeamRenderer unitsRenderer;
     ActionRangeRenderer actionRenderer;
     GameObject selectEff;
 
@@ -17,7 +17,7 @@ public class BattleRenderer : MonoBehaviour
         battleData = data;
 
         mapRenderer = GetComponentInChildren<BattleMapRenderer>();
-        unitsRenderer = GetComponentInChildren<BattleUnitsRenderer>();
+        unitsRenderer = GetComponentInChildren<BattleTeamRenderer>();
         actionRenderer = GetComponentInChildren<ActionRangeRenderer>();
         selectEff = transform.Find("SelectEff").gameObject;
         selectEff.SetActive(false);
@@ -68,6 +68,6 @@ public class BattleRenderer : MonoBehaviour
         }
 
         selectEff.SetActive(true);
-        selectEff.transform.position = new Vector3(0.5f + battleUnit.position.x, 0.5f + battleUnit.position.y, 0);
+        selectEff.transform.position = Utl.ToScreenPos(battleUnit.position);
     }
 }

@@ -30,4 +30,9 @@ public static class Utl
         }
         return res;
     }
+
+    public static Vector3 ToScreenPos(Vector2Int pos)
+    {
+        return new Vector3(0.5f + pos.x, 0.5f + pos.y, 0);
+    }
 }
