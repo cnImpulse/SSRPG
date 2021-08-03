@@ -16,21 +16,33 @@ public class BattleTeam
     {
         foreach (var t in unitsData)
         {
-            if (t.battleCamp == BattleCamp.Amity) amitys.Add(t);
-            else if (t.battleCamp == BattleCamp.Enemy) enemys.Add(t);
+            if (t.camp == BattleCamp.Amity) amitys.Add(t);
+            else if (t.camp == BattleCamp.Enemy) enemys.Add(t);
         }
     }
 
     public BattleUnit GetBattleUnit(Vector2Int pos)
     {
-        foreach (var t in amitys)
-            if (t.position == pos) return t;
-        foreach (var t in enemys)
-            if (t.position == pos) return t;
+        BattleUnit unit = GetAmity(pos);
+        if (unit != null) return unit;
+        return GetEnemy(pos);
+    }
+
+    public BattleUnit GetAmity(Vector2Int pos)
+    {
+        foreach (var unit in amitys)
+            if (unit.position == pos) return unit;
         return null;
     }
 
-    public List<BattleUnit> GetEnemys(BattleCamp camp)
+    public BattleUnit GetEnemy(Vector2Int pos)
+    {
+        foreach (var unit in enemys)
+            if (unit.position == pos) return unit;
+        return null;
+    }
+
+    public List<BattleUnit> GetCampEnemys(BattleCamp camp)
     {
         if (camp == BattleCamp.Amity)
             return enemys;
@@ -38,11 +50,22 @@ public class BattleTeam
             return amitys;
     }
 
-    public List<BattleUnit> GetAmitys(BattleCamp camp)
+    public List<BattleUnit> GetCampAmitys(BattleCamp camp)
     {
         if (camp == BattleCamp.Enemy)
             return enemys;
         else
             return amitys;
+    }
+
+    public bool IsHasUnit(Vector2Int pos)
+    {
+        return GetBattleUnit(pos) != null;
+    }
+
+    public bool IsHasCanAtkUnit(BattleUnit battleUnit, Vector2Int pos)
+    {
+        if (battleUnit.camp == BattleCamp.Amity) return GetEnemy(pos) != null;
+        return GetAmity(battleUnit.position) != null;
     }
 }

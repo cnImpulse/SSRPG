@@ -44,9 +44,9 @@ TagManager:
   - name: Map
     uniqueID: 526008557
     locked: 0
-  - name: UI
-    uniqueID: 3083350249
-    locked: 0
   - name: Unit
     uniqueID: 2090541911
+    locked: 0
+  - name: UI
+    uniqueID: 3083350249
     locked: 0

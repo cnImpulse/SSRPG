@@ -21,7 +21,7 @@ public class BattleMgr : Singleton<BattleMgr>
 
     public BattleRenderer battleRenderer;
 
-    public void CreatBattle(BattleCfg battleCfg) 
+    public void CreatBattle(BattleCfg battleCfg)
     {
         InitBattleData(battleCfg);
     }
@@ -42,7 +42,7 @@ public class BattleMgr : Singleton<BattleMgr>
     }
 
     #region InitData
-    private void InitBattleData(BattleCfg battleCfg) 
+    private void InitBattleData(BattleCfg battleCfg)
     {
         int mapWidth = battleCfg.mapWidth;
         int mapHeight = battleCfg.mapHeight;
@@ -50,7 +50,7 @@ public class BattleMgr : Singleton<BattleMgr>
         InitBattleMap(mapWidth, mapHeight);
     }
 
-    private void InitBattleMap(int width, int height) 
+    private void InitBattleMap(int width, int height)
     {
         battleMap = new BattleMap(width, height);
     }
@@ -72,14 +72,14 @@ public class BattleMgr : Singleton<BattleMgr>
         List<Vector2Int> open = new List<Vector2Int>();
         List<Vector2Int> close = new List<Vector2Int>();
         open.Add(battleUnit.position);
-        for (int i = 0; i <= battleUnit.battleAttr.mov; ++i)
+        for (int i = 0; i <= battleUnit.attr.mov; ++i)
         {
             int len = open.Count;
             if (len == 0) break;
             for (int j = 0; j < len; ++j)
             {
                 List<Vector2Int> neighbors = GetCanPassNeighbors(open[j], battleUnit);
-                foreach(var neigh in neighbors)
+                foreach (var neigh in neighbors)
                 {
                     if (!close.Contains(neigh))
                         open.Add(neigh);
@@ -90,24 +90,11 @@ public class BattleMgr : Singleton<BattleMgr>
         return close;
     }
 
-    public List<Vector2Int> GetCanAttackPos(BattleUnit battleUnit)
-    {
-        List<Vector2Int> res = new List<Vector2Int>();
-        List<BattleUnit> notAttacks = battleTeam.GetAmitys(battleUnit.battleCamp);
-        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.battleAttr.atkRange, BattleMap.dirArray4);
-        foreach(var grid in neighbors)
-        {
-            if (grid.IsObstacle) continue;
-            
-        }
-        return res;
-    }
-
     public List<Vector2Int> GetCanPassNeighbors(Vector2Int pos, BattleUnit battleUnit)
     {
         List<Vector2Int> res = new List<Vector2Int>();
         List<MapGrid> neighbors = battleMap.GetNeighbors(pos, BattleMap.dirArray4);
-        foreach(var neighbor in neighbors)
+        foreach (var neighbor in neighbors)
         {
             if (IsGridCanPass(neighbor.Position, battleUnit))
                 res.Add(neighbor.Position);
@@ -119,10 +106,10 @@ public class BattleMgr : Singleton<BattleMgr>
     public bool IsGridCanPass(Vector2Int destination, BattleUnit battleUnit)
     {
         MapGrid grid = battleMap.GetMapGrid(destination);
-        if(grid == null || grid.IsObstacle) return false;
+        if (grid == null || grid.IsObstacle) return false;
 
-        List<BattleUnit> obstacleUnits = battleTeam.GetEnemys(battleUnit.battleCamp);
-        foreach(var obstacle in obstacleUnits) 
+        List<BattleUnit> obstacleUnits = battleTeam.GetCampEnemys(battleUnit.camp);
+        foreach (var obstacle in obstacleUnits)
         {
             if (destination == obstacle.position)
                 return false;
@@ -135,14 +122,15 @@ public class BattleMgr : Singleton<BattleMgr>
         MapGrid grid = battleMap.GetMapGrid(destination);
         if (grid == null || grid.IsObstacle) return false;
 
-        if (battleTeam.GetBattleUnit(destination) == null) return true;
+        if (battleTeam.IsHasUnit(destination)) return true;
         return false;
     }
 
     #region Õ½¶·×´Ì¬
-
-    public BattleState battleState = BattleState.None;
+    public ActMod actMod { get; set; } = ActMod.None;
+    public BattleState battleState = BattleState.Amity;
     public List<MapGrid> canMoveGrids = new List<MapGrid>();
+    public List<MapGrid> canAtkGrids = new List<MapGrid>();
     public BattleUnit selectUnit = null;
 
     #endregion
@@ -172,14 +160,32 @@ public class BattleMgr : Singleton<BattleMgr>
 
     private void OnSelectBattleUnit(BattleUnit battleUnit)
     {
+        if (!battleUnit.CanAction())
+        {
+            OnUnSelectBattleUnit();
+            return;
+        }
         selectUnit = battleUnit;
-        SetCanMoveGrids(battleUnit);
+        battleRenderer.ShowButtleUnitActCmd();
+        OnSelectAtkCmd(battleUnit);
     }
 
     private void OnUnSelectBattleUnit()
     {
         selectUnit = null;
         canMoveGrids.Clear();
+    }
+
+    private void OntSelectMoveCmd(BattleUnit battleUnit)
+    {
+        SetCanMoveGrids(battleUnit);
+        actMod = ActMod.Move;
+    }
+
+    private void OnSelectAtkCmd(BattleUnit battleUnit)
+    {
+        SetCanAtkGrids(battleUnit);
+        actMod = ActMod.Atk;
     }
 
     private void OnDataChange()
@@ -198,5 +204,28 @@ public class BattleMgr : Singleton<BattleMgr>
             MapGrid grid = battleMap.GetMapGrid(pos);
             if (IsGridCanMove(pos)) canMoveGrids.Add(grid);
         }
+    }
+
+    private void SetCanAtkGrids(BattleUnit battleUnit)
+    {
+        canAtkGrids.Clear();
+        canAtkGrids = GetCanAttackPos(battleUnit);
+    }
+
+    private List<MapGrid> GetCanAttackPos(BattleUnit battleUnit)
+    {
+        List<MapGrid> res = new List<MapGrid>();
+        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.attr.atkRange, BattleMap.dirArray4);
+        foreach (var grid in neighbors)
+        {
+            if (IsGridCanAtk(battleUnit, grid)) res.Add(grid);
+        }
+        return neighbors;
+    }
+
+    private bool IsGridCanAtk(BattleUnit battleUnit, MapGrid grid)
+    {
+        if (grid == null || grid.IsObstacle || battleTeam.IsHasCanAtkUnit(battleUnit, grid.Position)) return false;
+        return true;
     }
 }

@@ -9,7 +9,7 @@ public class BattleRenderer : MonoBehaviour
 
     BattleMapRenderer mapRenderer;
     BattleTeamRenderer unitsRenderer;
-    ActionRangeRenderer actionRenderer;
+    ActRangeRenderer actionRenderer;
     GameObject selectEff;
 
     public void Init(BattleData data)
@@ -18,7 +18,7 @@ public class BattleRenderer : MonoBehaviour
 
         mapRenderer = GetComponentInChildren<BattleMapRenderer>();
         unitsRenderer = GetComponentInChildren<BattleTeamRenderer>();
-        actionRenderer = GetComponentInChildren<ActionRangeRenderer>();
+        actionRenderer = GetComponentInChildren<ActRangeRenderer>();
         selectEff = transform.Find("SelectEff").gameObject;
         selectEff.SetActive(false);
 
@@ -56,6 +56,11 @@ public class BattleRenderer : MonoBehaviour
         actionRenderer.Refresh();
         unitsRenderer.Refresh();
         RefreshSelectEff();
+    }
+
+    public void ShowButtleUnitActCmd()
+    {
+
     }
 
     private void RefreshSelectEff()

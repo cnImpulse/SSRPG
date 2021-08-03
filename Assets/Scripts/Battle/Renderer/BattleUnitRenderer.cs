@@ -13,8 +13,8 @@ public class BattleUnitRenderer : MonoBehaviour
         if (data == null) return;
 
         sprite = GetComponent<SpriteRenderer>();
-        ColorUtility.TryParseHtmlString("#FF7070", out amityColor);
-        ColorUtility.TryParseHtmlString("#70FFF0", out enemyColor);
+        ColorUtility.TryParseHtmlString("#70FFF0", out amityColor);
+        ColorUtility.TryParseHtmlString("#FF7070", out enemyColor);
 
         battleUnit = data;
         Refresh();
@@ -28,7 +28,7 @@ public class BattleUnitRenderer : MonoBehaviour
 
     private void RefreshColor()
     {
-        switch (battleUnit.battleCamp)
+        switch (battleUnit.camp)
         {
             case BattleCamp.Amity: sprite.color = amityColor; break;
             case BattleCamp.Enemy: sprite.color = enemyColor; break;

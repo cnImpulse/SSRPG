@@ -69,7 +69,7 @@ public class BattleEditor : MonoBehaviour
         battleData.unitsData = unitsData;
 
         string json = JsonConvert.SerializeObject(battleData);
-        string path = Application.dataPath + "/BattleData/default.json";
+        string path = Application.dataPath + "/BattleDatas/default.json";
         FileInfo file = new FileInfo(path);
         StreamWriter sw = file.CreateText();
         sw.Write(json);
