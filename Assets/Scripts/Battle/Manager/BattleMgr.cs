@@ -6,14 +6,6 @@ public struct BattleCfg {
     public int mapHeight;
 }
 
-public enum BattleState
-{
-    None,       // 战斗未开始
-    Amity,      // 我方回合
-    Enemy,      // 敌方回合
-    End         // 战斗结束
-}
-
 public class BattleMgr : Singleton<BattleMgr>
 {
     public BattleMap battleMap;
