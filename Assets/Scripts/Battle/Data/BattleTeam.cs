@@ -21,6 +21,28 @@ public class BattleTeam
         }
     }
 
+    public void BattleUnitsRecover(BattleState state)
+    {
+        List<BattleUnit> units = GetActTeam(state);
+        foreach(var unit in units)
+        {
+            unit.BoutRecover();
+        }
+    }
+
+    public List<BattleUnit> GetActTeam(BattleState state)
+    {
+        if (state == BattleState.Amity)
+        {
+            return amitys;
+        }
+        else if (state == BattleState.Enemy)
+        {
+            return enemys;
+        }
+        return null;
+    }
+
     public BattleUnit GetBattleUnit(Vector2Int pos)
     {
         BattleUnit unit = GetAmity(pos);

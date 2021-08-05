@@ -5,4 +5,5 @@ public class BattleData
 {
     public BattleMap mapData;
     public List<BattleUnit> unitsData;
+    public BattleTeam teamData;
 }

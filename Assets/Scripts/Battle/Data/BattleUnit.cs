@@ -25,4 +25,9 @@ public class BattleUnit : EntityBase
         position = grid.Position;
         attr.act--;
     }
+
+    public void BoutRecover()
+    {
+        attr.act = 1;
+    }
 }
