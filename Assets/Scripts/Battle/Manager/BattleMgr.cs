@@ -64,7 +64,7 @@ public class BattleMgr : Singleton<BattleMgr>
         List<Vector2Int> open = new List<Vector2Int>();
         List<Vector2Int> close = new List<Vector2Int>();
         open.Add(battleUnit.position);
-        for (int i = 0; i <= battleUnit.attr.mov; ++i)
+        for (int i = 0; i <= battleUnit.Mov; ++i)
         {
             int len = open.Count;
             if (len == 0) break;
@@ -207,7 +207,7 @@ public class BattleMgr : Singleton<BattleMgr>
     private List<MapGrid> GetCanAttackPos(BattleUnit battleUnit)
     {
         List<MapGrid> res = new List<MapGrid>();
-        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.attr.atkRange, BattleMap.dirArray4);
+        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.AtkRange, BattleMap.dirArray4);
         foreach (var grid in neighbors)
         {
             if (IsGridCanAtk(battleUnit, grid)) res.Add(grid);

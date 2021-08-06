@@ -17,6 +17,7 @@ public class BattleLogicMgr
     private BattleState state = BattleState.None;
 
     public event Action<BattleState> OnNextBout;
+    public event Action<BattleUnit, BattleUnit> OnBattleAttack;
 
     public void StartBattle(BattleData data)
     {
@@ -59,7 +60,7 @@ public class BattleLogicMgr
         {
             MoveAI(actUnit);
             AttackAI(actUnit);
-        } while (actUnit.attr.act > 0);
+        } while (actUnit.Act > 0);
     }
 
     private void MoveAI(BattleUnit actUnit)
@@ -77,11 +78,16 @@ public class BattleLogicMgr
         List<BattleUnit> units = team.GetActTeam(state);
         foreach(var unit in units)
         {
-            if(unit.attr.act > 0)
+            if(unit.Act > 0)
             {
                 return unit;
             }
         }
         return null;
+    }
+
+    private void BattleUnitAttack(BattleUnit attacker, BattleUnit target)
+    {
+        target.Hp -= attacker.Atk;
     }
 }
