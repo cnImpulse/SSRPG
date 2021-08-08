@@ -17,10 +17,15 @@ public enum GridType {
     Obstacle    //障碍
 }
 
-public class MapGrid : EntityBase {
+public class MapGrid : EntityBase, INode
+{
     public GridPos GridPos { get; set; }
     public Vector2Int Position
     {
+        set
+        {
+            
+        }
         get
         {
             return new Vector2Int(GridPos.col, GridPos.row);
@@ -50,5 +55,11 @@ public class MapGrid : EntityBase {
     public MapGrid(Vector2Int pos)
     {
         GridPos = new GridPos(pos.y, pos.x);
+    }
+
+    //  曼哈顿距离
+    public int GetDistance(Vector2Int pos)
+    {
+        return Mathf.Abs(Position.x - pos.x) + Mathf.Abs(Position.y - pos.y);
     }
 }

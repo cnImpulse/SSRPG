@@ -201,13 +201,13 @@ public class BattleMgr : Singleton<BattleMgr>
     private void SetCanAtkGrids(BattleUnit battleUnit)
     {
         canAtkGrids.Clear();
-        canAtkGrids = GetCanAttackPos(battleUnit);
+        canAtkGrids = GetCanAttackGrid(battleUnit);
     }
 
-    private List<MapGrid> GetCanAttackPos(BattleUnit battleUnit)
+    public List<MapGrid> GetCanAttackGrid(BattleUnit battleUnit)
     {
         List<MapGrid> res = new List<MapGrid>();
-        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.AtkRange, BattleMap.dirArray4);
+        List<MapGrid> neighbors = battleMap.GetNeighborsInRange(battleUnit.position, battleUnit.AtkRange + battleUnit.Mov, BattleMap.dirArray4);
         foreach (var grid in neighbors)
         {
             if (IsGridCanAtk(battleUnit, grid)) res.Add(grid);

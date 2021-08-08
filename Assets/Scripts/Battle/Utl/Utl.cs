@@ -35,4 +35,9 @@ public static class Utl
     {
         return new Vector3(0.5f + pos.x, 0.5f + pos.y, 0);
     }
+
+    public static int GetDistance(Vector2Int pos1, Vector2Int pos2)
+    {
+        return Mathf.Abs(pos1.x - pos2.x) + Mathf.Abs(pos1.y - pos2.y);
+    }
 }

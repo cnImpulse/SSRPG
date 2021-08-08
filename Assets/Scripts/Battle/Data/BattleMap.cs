@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleMap : EntityBase 
+public class BattleMap : EntityBase, IMap<MapGrid>
 {
     public int Width = 0;
     public int Height = 0;
@@ -25,6 +25,19 @@ public class BattleMap : EntityBase
                 mapGrids[row, col] = new MapGrid(row, col);
             }
         }
+    }
+
+    public List<MapGrid> GetNeighbors(MapGrid center)
+    {
+        if (center == null) return null;
+        Vector2Int[] dirArray = dirArray4;
+        List<MapGrid> neighbors = new List<MapGrid>();
+        for (int i = 0; i < dirArray.Length; ++i)
+        {
+            MapGrid grid = GetMapGrid(center.Position + dirArray[i]);
+            if (grid != null) neighbors.Add(grid);
+        }
+        return neighbors;
     }
 
     public List<MapGrid> GetNeighbors(Vector2Int center, Vector2Int[] dirArray)

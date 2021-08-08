@@ -11,6 +11,7 @@ public class Test : MonoBehaviour
         string json = sr.ReadLine();
         BattleData battleData = JsonConvert.DeserializeObject<BattleData>(json);
         if (battleData.mapData == null) Debug.LogError("gan");
-        BattleMgr.Instance.CreatBattle(battleData);
+        //BattleMgr.Instance.CreatBattle(battleData);
+        BattleLogicMgr.Instance.StartBattle(battleData);
     }
 }

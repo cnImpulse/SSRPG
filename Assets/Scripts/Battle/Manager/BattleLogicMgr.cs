@@ -10,24 +10,22 @@ public enum BattleState
     End         // 战斗结束
 }
 
-public class BattleLogicMgr
+public class BattleLogicMgr : Singleton<BattleLogicMgr>
 {
     private BattleMap map;
     private BattleTeam team;
     private BattleState state = BattleState.None;
 
     public event Action<BattleState> OnNextBout;
-    public event Action<BattleUnit, BattleUnit> OnBattleAttack;
 
     public void StartBattle(BattleData data)
     {
         map = data.mapData;
-        team = data.teamData;
+        team = new BattleTeam(data.unitsData);
 
         OnNextBout += team.BattleUnitsRecover;
 
         NextBout();
-        TeamAct();
     }
 
     private void NextBout()
@@ -41,6 +39,7 @@ public class BattleLogicMgr
             state = BattleState.Enemy;
         }
         OnNextBout(state);
+        TeamAct();
     }
 
     private void TeamAct()
@@ -49,28 +48,43 @@ public class BattleLogicMgr
         while (actUnit != null)
         {
             UnitAct(actUnit);
+            actUnit = GetActUnit();
         }
-        NextBout();
-        TeamAct();
     }
 
     private void UnitAct(BattleUnit actUnit)
     {
         do
         {
-            MoveAI(actUnit);
-            AttackAI(actUnit);
+            UnitActAI(actUnit);
         } while (actUnit.Act > 0);
     }
 
-    private void MoveAI(BattleUnit actUnit)
+    private void UnitActAI(BattleUnit actUnit)
     {
+        // 选择目标
+        BattleUnit target = null;
+        int minDistance = int.MaxValue;
+        List<BattleUnit> enemys = team.GetCampEnemys(actUnit.camp);
+        foreach (var enemy in enemys)
+        {
+            int d = Utl.GetDistance(actUnit.position, enemy.position);
+            if (minDistance > d)
+            {
+                minDistance = d;
+                target = enemy;
+            }
+        }
 
-    }
-
-    private void AttackAI(BattleUnit actUnit)
-    {
-
+        // 移动
+        List<MapGrid> path, search;
+        Navigator<BattleMap, MapGrid>.Instance.Navigate(map, map.GetMapGrid(actUnit.position), map.GetMapGrid(target.position), out path, out search);
+        foreach(var p in path)
+        {
+            Debug.Log(p.Position);
+        }
+        Debug.Log("--------------");
+        actUnit.Act--;
     }
 
     private BattleUnit GetActUnit()
@@ -89,5 +103,10 @@ public class BattleLogicMgr
     private void BattleUnitAttack(BattleUnit attacker, BattleUnit target)
     {
         target.Hp -= attacker.Atk;
+    }
+
+    private void IsBattleEnd()
+    {
+        
     }
 }
